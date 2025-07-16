@@ -23,10 +23,8 @@ class OverlayWindow(Gtk.Window):
         self.selectedDiv0Row = 0 # The selected row of division 0
 
         self.SOCKET_PATH = "/tmp/overlay.sock"
-        self.HOME = os.path.expanduser("~")
-        self.CONFIG_FOLDER = self.HOME + "/.config/nowaymouse/"
-        self.DEFAULT_CONFIG_PATH = self.CONFIG_FOLDER + "config.yaml"
-        self.USER_CONFIG_PATH = self.CONFIG_FOLDER + "usrconfig.yaml"
+        self.DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "default.yaml")
+        self.USER_CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".config", "nowaymouse", "config.yaml")
 
         # Mapps field names defined in config to corrresponding variable names in code
         self.config_map = {
@@ -88,6 +86,8 @@ class OverlayWindow(Gtk.Window):
 
     # Load the contents of the config file specified at path
     def load_config(self, config):
+        if not os.path.exists(config): return
+
         with open(config, 'r') as file:
             data = yaml.safe_load(file) or {}
 

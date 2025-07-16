@@ -22,8 +22,8 @@ var (
 	// ========== Path variables ========== //
 
 	socketPath string = "/tmp/overlay.sock"
-	defaultConfigPath string = filepath.Join("/home", userName(), ".config", "nowaymouse", "config.yaml")
-	userConfigPath string = filepath.Join("/home", userName(), ".config", "nowaymouse", "usrconfig.yaml")
+	defaultConfigPath string = getScriptPath("default.yaml")
+	userConfigPath string = filepath.Join("/home", userName(), ".config", "nowaymouse", "config.yaml")
 
 	// ========== Configuratble variables ========== //
 
@@ -124,6 +124,17 @@ func userName() string {
 	return ""
 }
 
+// Get the folder contianing this script, and append python script name to it
+func getScriptPath(scriptName string) string {
+	exePath, err := os.Executable()
+	if err != nil {
+		fmt.Println("Failed to get executable path:", err)
+		os.Exit(1)
+	}
+	exeDir := filepath.Dir(exePath)
+	return filepath.Join(exeDir, scriptName)
+}
+
 // Function that loads the config
 func load_config(path string) {
 	data, err := os.ReadFile(path)
@@ -216,17 +227,6 @@ func initMouse() {
 	} else {
 		fmt.Printf("Created virtual mouse")
 	}
-}
-
-// Get the folder contianing this script, and append python script name to it
-func getScriptPath(scriptName string) string {
-	exePath, err := os.Executable()
-	if err != nil {
-		fmt.Println("Failed to get executable path:", err)
-		os.Exit(1)
-	}
-	exeDir := filepath.Dir(exePath)
-	return filepath.Join(exeDir, scriptName)
 }
 
 // Start overlay python process with non-root environtment
