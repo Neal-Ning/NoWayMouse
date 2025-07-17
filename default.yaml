@@ -6,6 +6,20 @@ keyboard_input_path: /dev/input/event7
 
 activation_key: HOME
 overlay_key: M
+mouse_click: SPACE
+mouse_up: W
+mouse_left: A
+mouse_down: S
+mouse_right: D
+scroll_up: K
+scroll_left: H
+scroll_down: J
+scroll_right: L
+
+# ========== Movement modifier config ========== #
+
+mouse_speed: 10
+scroll_speed: 5
 
 # ========== overlay config ========== #
 

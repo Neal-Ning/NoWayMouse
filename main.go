@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"net"
@@ -33,6 +34,17 @@ var (
 	// Keybinds
 	activationKey string
 	overlayKey string
+	mouseClick string
+	mouseUp string
+	mouseLeft string
+	mouseDown string
+	mouseRight string
+	scrollUp string
+	scrollLeft string
+	scrollDown string
+	scrollRight string
+	mouseSpeed int32
+	scrollSpeed int32
 
 	// Resolution
 	resX int32
@@ -94,6 +106,13 @@ var (
 	// Temporary state variables
 	selectedDiv0Col int32
 	selectedDiv0Row int32
+	heldMovementKeys map[string]bool = map[string]bool{
+		"W": false,
+		"A": false,
+		"S": false,
+		"D": false,
+	}
+	movementMutex = sync.RWMutex{}
 )
 
 // Config variable mapping
@@ -101,6 +120,17 @@ type Config struct {
 	KeyboardPath string `yaml:"keyboard_input_path"`
 	ActivationKey string `yaml:"activation_key"`
 	OverlayKey string `yaml:"overlay_key"`
+	MouseClick string `yaml:"mouse_click"`
+	MouseUKey string `yaml:"mouse_up"`
+	MouseLKey string `yaml:"mouse_left"`
+	MouseDKey string `yaml:"mouse_down"`
+	MouseRKey string `yaml:"mouse_right"`
+	ScrollUKey string `yaml:"scroll_up"`
+	ScrollLKey string `yaml:"scroll_left"`
+	ScrollDKey string `yaml:"scroll_down"`
+	ScrollRKey  string `yaml:"scroll_right"`
+	MouseSpeed int32 `yaml:"mouse_speed"`
+	ScrollSpeed int32 `yaml:"scroll_speed"`
 	ResX int32 `yaml:"screen_x_resolution"`
 	ResY int32 `yaml:"screen_y_resolution"`
 	Div1Cols int32 `yaml:"div_1_n_cols"`
@@ -152,6 +182,17 @@ func set_config() {
 	keyboardPath = config.KeyboardPath
 	activationKey = config.ActivationKey
 	overlayKey = config.OverlayKey
+	mouseClick = config.MouseClick
+	mouseUp = config.MouseUKey
+	mouseLeft = config.MouseLKey
+	mouseDown = config.MouseDKey
+	mouseRight = config.MouseRKey
+	scrollUp = config.ScrollUKey
+	scrollLeft = config.ScrollLKey
+	scrollDown = config.ScrollDKey
+	scrollRight = config.ScrollRKey
+	mouseSpeed = config.MouseSpeed
+	scrollSpeed = config.ScrollSpeed
 	resX = config.ResX
 	resY = config.ResY
 	div1Cols = config.Div1Cols
@@ -310,6 +351,27 @@ func enterOverlayMode() {
 	overlayMode = true
 }
 
+// Separate process to monitor held movement keys
+func movementLoop() {
+	for {
+		movementMutex.RLock()
+		if (heldMovementKeys["W"]) {
+			mouse.Move(0, -mouseSpeed)
+		}
+		if (heldMovementKeys["A"]) {
+			mouse.Move(-mouseSpeed, 0)
+		}
+		if (heldMovementKeys["S"]) {
+			mouse.Move(0, mouseSpeed)
+		}
+		if (heldMovementKeys["D"]) {
+			mouse.Move(mouseSpeed, 0)
+		}
+		movementMutex.RUnlock()
+		time.Sleep(16 * time.Millisecond)
+	}
+}
+
 // Main loop
 func main() {
 
@@ -328,6 +390,8 @@ func main() {
 	defer mouse.Close()
 	initOverlay()
 	defer terminateOverLay()
+
+	go movementLoop()
 
 	mainLoop:
 	for {
@@ -377,23 +441,27 @@ func main() {
 
 				// Smoother movement necessary
 				if (mouseMode) {
-					if (keyNames[event.Code] == "W") {
-						mouse.Move(0, -10)
-					} else if (keyNames[event.Code] == "A") {
-						mouse.Move(-10, 0)
-					} else if (keyNames[event.Code] == "S") {
-						mouse.Move(0, 10)
-					} else if (keyNames[event.Code] == "D") {
-						mouse.Move(10, 0)
-					} else if (keyNames[event.Code] == "J") {
-						mouse.Wheel(false, -5)
-					} else if (keyNames[event.Code] == "K") {
-						mouse.Wheel(false, 5)
-					} else if (keyNames[event.Code] == "H") {
-						mouse.Wheel(true, -5)
-					} else if (keyNames[event.Code] == "L") {
-						mouse.Wheel(true, -5)
-					} else if (keyNames[event.Code] == "SPACE") {
+					var code string = keyNames[event.Code]
+					if (code == mouseUp || code == mouseLeft || code == mouseDown || code == mouseRight) {
+						movementMutex.Lock()
+						switch (event.Value) {
+							case 1: 
+								heldMovementKeys[code] = true
+							case 0:
+								heldMovementKeys[code] = false
+						}
+						movementMutex.Unlock()
+					}
+
+					if (keyNames[event.Code] == scrollDown) {
+						mouse.Wheel(false, -scrollSpeed)
+					} else if (keyNames[event.Code] == scrollUp) {
+						mouse.Wheel(false, scrollSpeed)
+					} else if (keyNames[event.Code] == scrollLeft) {
+						mouse.Wheel(true, -scrollSpeed)
+					} else if (keyNames[event.Code] == scrollRight) {
+						mouse.Wheel(true, scrollSpeed)
+					} else if (keyNames[event.Code] == mouseClick) {
 						mouse.LeftClick() // Double check
 					}
 				}
