@@ -14,14 +14,12 @@ class OverlayWindow(Gtk.Window):
     def __init__(self):
         super().__init__()
 
-        # States: 
-        # 0: Overlay hidden
-        # 1: Overlay division 0
-        # 2: Overlay divission 1
-        self.state = 0
-        self.selectedDiv0Col = 0 # The selected column of division 0
-        self.selectedDiv0Row = 0 # The selected row of division 0
+        # ========== Variables ========== #
 
+        # Division counter / tracker
+        self.div_count = -1
+
+        # Path variables
         self.SOCKET_PATH = "/tmp/overlay.sock"
         self.DEFAULT_CONFIG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "default.yaml")
         self.USER_CONFIG_PATH = os.path.join(os.path.expanduser("~"), ".config", "nowaymouse", "config.yaml")
@@ -30,13 +28,12 @@ class OverlayWindow(Gtk.Window):
         self.config_map = {
             'screen_x_resolution': 'width',
             'screen_y_resolution': 'height',
-            'div_1_n_cols': 'div1Cols',
-            'div_1_n_rows': 'div1Rows',
-            'div_0_first_key': 'div0key0',
-            'div_0_second_key_0': 'div0key1R',
-            'div_0_second_key_1': 'div0key1L',
-            'div_1_key': 'div1keys'
+            'number_of_divisions': 'n_divs',
+            'division_dimensions': 'div_dim',
+            'division_navigators': 'div_keys',
         }
+
+        # ========== GTK Initializations ========== #
 
         # Init layer shell
         GtkLayerShell.init_for_window(self) # Use wayland layer shell protocol
@@ -97,12 +94,20 @@ class OverlayWindow(Gtk.Window):
 
     # Infer more variables from already defined variables
     def finalize_config(self):
-        self.div0Cols = len(self.div0key0)
-        self.div0Rows = len(self.div0key1R)
-        self.box0X = int(self.width / self.div0Cols)
-        self.box0Y = int(self.height / self.div0Rows)
-        self.box1X = int(self.box0X / self.div1Cols)
-        self.box1Y = int(self.box0Y / self.div1Rows)
+        # Divided area of each division
+        self.div_area = [[self.width, self.height]]
+        for i in range(len(self.div_dim)):
+            self.div_area.append([
+                self.div_area[i][0] / self.div_dim[i][0],
+                self.div_area[i][1] / self.div_dim[i][1]
+            ])
+
+        # Find longest key for each division
+        self.longest_key = ["" for _ in self.div_keys]
+        for i in range(len(self.div_keys)):
+            for key in self.div_keys[i]:
+                if len(self.longest_key[i]) < len(key):
+                    self.longest_key[i] = key
 
     # Listens for messages from the main go code
     def socket_listener(self):
@@ -123,94 +128,88 @@ class OverlayWindow(Gtk.Window):
                     self.overlay_request = data.split(",")
                     # Hide the overlay, State = 0
                     if self.overlay_request[0] == "hide":
-                        self.state = 0
+                        self.div_count = -1
                         GLib.idle_add(self.hide)
-                    # Show overlay with division 0, state = 1
-                    elif self.overlay_request[0] == "show0":
-                        self.state = 1
-                        GLib.idle_add(self.show_all)
-                    # Show overlay with division 1, state = 2
-                    elif self.overlay_request[0] == "show1":
+                    elif self.overlay_request[0] == "show":
                         # Note: hide again to reload the overlay
                         GLib.idle_add(self.hide)
-                        self.state = 2
-                        self.selectedDiv0Col = int(self.overlay_request[1])
-                        self.selectedDiv0Row = int(self.overlay_request[2])
+                        self.div_count = int(self.overlay_request[1])
+                        self.current_div_box_x = int(self.overlay_request[2])
+                        self.current_div_box_y = int(self.overlay_request[3])
                         GLib.idle_add(self.show_all)
                         GLib.idle_add(self.area.queue_draw)
 
     # Called everytime GTK redraws the overlay
     def on_draw(self, widget, cr):
 
-        if self.state == 0: return
+        if self.div_count == -1: return
+        
+        cr.set_operator(cairo.OPERATOR_CLEAR)
+        cr.paint()
+        cr.set_operator(cairo.OPERATOR_OVER)
 
-        if self.state == 1:
+        # Color background (black) and set transparency
+        cr.set_source_rgba(0, 0, 0, 0.3)
+        cr.rectangle(0, 0, self.width, self.height)
+        cr.fill()
 
-            cr.set_operator(cairo.OPERATOR_CLEAR)
-            cr.paint()
-            cr.set_operator(cairo.OPERATOR_OVER)
+        # Draw division lines
+        cr.set_source_rgba(1, 1, 1, 0.3)
+        cr.set_line_width(2)
 
-            # Color background (black) and set transparency
-            cr.set_source_rgba(0, 0, 0, 0.3)
-            cr.rectangle(0, 0, self.width, self.height)
-            cr.fill()
+        # Infer auxilliary variables
+        start_coord_x = self.current_div_box_x
+        start_coord_y = self.current_div_box_y
+        box_width = self.div_area[self.div_count][0]
+        box_height = self.div_area[self.div_count][1]
+        next_box_width = self.div_area[self.div_count + 1][0]
+        next_box_height = self.div_area[self.div_count + 1][1]
 
-            # Draw division lines
-            cr.set_source_rgba(1, 1, 1, 0.3)
-            cr.set_line_width(2)
-            cr.rectangle(0, 0, self.width, self.height)
-            cr.rectangle(self.box0X, 0, 0, self.height)
-            for i in range(self.div0Cols):
-                cr.rectangle(self.box0X * i, 0, 0, self.height)
-            for i in range(self.div0Rows):
-                cr.rectangle(0, self.box0Y * i, self.width, 0)
-            cr.stroke()
+        # Draw the division grid
+        cr.rectangle(start_coord_x, start_coord_y, box_width, box_height)
+        for i in range(1, self.div_dim[self.div_count][0]):
+            cr.rectangle(start_coord_x + next_box_width * i, start_coord_y, 0, box_height)
+        for i in range(1, self.div_dim[self.div_count][1]):
+            cr.rectangle(start_coord_x, start_coord_y + next_box_height * i, box_width, 0)
+        cr.stroke()
 
-            # Draw text
-            cr.set_source_rgba(1, 1, 1, 0.8)
-            cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-            cr.set_font_size(32)
+        # Conversion from pixel to font size for width
+        def fit_text_width(cr, text, target_width):
+            cr.set_font_size(1)
+            width = cr.text_extents(text).width
+            scale = target_width / width
+            cr.set_font_size(scale)
+            return scale
 
-            for i in range(self.div0Cols):
-                for j in range(self.div0Rows):
-                    cr.move_to(self.box0X * i + int(self.box0X / 3), self.box0Y * j + int(self.box0Y / 2) + 20)
-                    if i < 5:
-                        cr.show_text(self.div0key0[i] + self.div0key1R[j])
-                    else:
-                        cr.show_text(self.div0key0[i] + self.div0key1L[j])
+        # Conversion from pixel to font size for height
+        def fit_text_height(cr, text, target_height):
+            cr.set_font_size(1)
+            height = cr.text_extents(text).height
+            scale = target_height / height
+            cr.set_font_size(scale)
+            return scale
 
-        elif self.state == 2:
+        # Text configs
+        cr.set_source_rgba(1, 1, 1, 0.8)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+        scale_fit_width = fit_text_width(cr, self.longest_key[self.div_count], self.div_area[self.div_count][0] / 5)
+        scale_fit_height = fit_text_height(cr, self.longest_key[self.div_count], self.div_area[self.div_count][1] / 5)
+        cr.set_font_size(min(scale_fit_width, scale_fit_height))
 
-            cr.set_operator(cairo.OPERATOR_CLEAR)
-            cr.paint()
-            cr.set_operator(cairo.OPERATOR_OVER)
+        # Draw text
+        for i in range(self.div_dim[self.div_count][0]):
+            for j in range(self.div_dim[self.div_count][1]):
+                text = self.div_keys[self.div_count][j * self.div_dim[self.div_count][0] + i]
+                box_center_x = start_coord_x + next_box_width * i + int(next_box_width / 2)
+                box_center_y = start_coord_y + next_box_height * j + int(next_box_height / 2)
 
-            # Color background (black) and set transparency
-            cr.set_source_rgba(0, 0, 0, 0.3)
-            cr.rectangle(0, 0, self.width, self.height)
-            cr.fill()
+                # Compute coordinate to fit text to center of box
+                extents = cr.text_extents(text)
+                move_to_x = box_center_x - (extents.width / 2 + extents.x_bearing)
+                move_to_y = box_center_y - (extents.height / 2 + extents.y_bearing)
 
-            # Draw division lines
-            cr.set_source_rgba(1, 1, 1, 0.3)
-            cr.set_line_width(2)
-            startCoordX = self.selectedDiv0Col * self.box0X
-            startCoordY = self.selectedDiv0Row * self.box0Y
-            cr.rectangle(startCoordX, startCoordY, self.box0X, self.box0Y)
-            for i in range(self.div1Cols):
-                cr.rectangle(startCoordX + self.box1X * i, startCoordY, 0, self.box0Y)
-            for i in range(self.div1Rows):
-                cr.rectangle(startCoordX, startCoordY + self.box1Y * i, self.box0X, 0)
-            cr.stroke()
-
-            # Draw text
-            cr.set_source_rgba(1, 1, 1, 0.8)
-            cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-            cr.set_font_size(16)
-
-            for i in range(self.div1Cols):
-                for j in range(self.div1Rows):
-                    cr.move_to(startCoordX + self.box1X * i + int(self.box1X / 3), startCoordY + self.box1Y * j + int(self.box1Y / 2) + 7)
-                    cr.show_text(self.div1keys[j * self.div1Cols + i])
+                cr.move_to(move_to_x, move_to_y)
+                cr.show_text(text)
 
 
 if __name__ == "__main__":

@@ -168,28 +168,28 @@ func set_config() {
 // Verify that the defined config is sound
 func verify_config() {
 	if (nDivs != len(divDim)) {
-		panic(fmt.Sprintln("Defined number_of_divisions doesn't match the number of divisions dimensions given in division_dimensions."))
+		panic(fmt.Sprintf("Error in config: \nnumber_of_divisions = %v, but defined %v sets of division_dimensions.\n", nDivs, len(divDim)))
 	}
 	if (nDivs != len(divKeys)) {
-		panic(fmt.Sprintln("Defined number_of_divisions doesn't match the number of divisions dimensions inferred from division_navigators."))
+		panic(fmt.Sprintf("Error in config: \nnumber_of_divisions = %v, but defined %v sets of division_navigators.\n", nDivs, len(divKeys)))
 	}
 
 	var boxSizeX float32 = float32(resX)
 	var boxSizeY float32 = float32(resY)
 	for i, dim := range divDim {
 		if (len(dim) != 2 || dim[0] < 1 || dim[1] < 1) {
-			panic(fmt.Sprintln("The dimension of each division should be in the format: [x, y], where x, y >= 1."))
+			panic(fmt.Sprintf("Error in config: \nDivision dimension: %v not in format: [x, y], where x, y >= 1.\n", dim))
 		}
 
 		if (len(divKeys[i]) != int(dim[0] * dim[1])) {
-			panic(fmt.Sprintln("For a division, each list of navigators much match its corresponding division dimension."))
+			panic(fmt.Sprintf("Error in config: \n%v keys defined for division %v. \nThis doesn't fit or cover the defined dimension of %v * %v\n", len(divKeys[i]), i, dim[0], dim[1]))
 		}
 
 		boxSizeX /= float32(dim[0])
 		boxSizeY /= float32(dim[1])
 	}
 	if (boxSizeX < 5 || boxSizeY < 5) {
-		panic(fmt.Sprintln("You have divided too much. The last division should at least have 5x5 grids."))
+		panic("Error in config: \nYou have divided too much. The last division should at least have 5x5 grids.\n")
 	}
 }
 

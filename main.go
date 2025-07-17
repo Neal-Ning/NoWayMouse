@@ -62,10 +62,7 @@ func terminateOverLay() {
 
 // Display the overlay showing the division
 func showOverlay() {
-	messageOverlay([]byte(fmt.Sprintf("show, %v, %v, %v, %v, %v, %v, %v",
-		divCount, currentDivBoxX, currentDivBoxY,
-		divArea[divCount][0], divArea[divCount][1],
-		divDim[divCount][0], divDim[divCount][1])))
+	messageOverlay([]byte(fmt.Appendf([]byte{},"show, %v, %v, %v", divCount, currentDivBoxX, currentDivBoxY)))
 }
 
 // Hide the overlay
@@ -120,6 +117,7 @@ func main() {
 	load_config(defaultConfigPath)
 	load_config(userConfigPath)
 	set_config()
+	verify_config()
 	finalize_config()
 
 	// Initializations
@@ -200,75 +198,26 @@ func main() {
 				if (divMode && event.Value == 0) {
 					pressed += keyNames[event.Code]
 					if _,ok := divKeyMaps[divCount][pressed]; ok {
-						fmt.Println("Pressed in map")
 						mouseToBox()
 						if (divCount == nDivs - 1) {
 							divMode = false
 							exitDivMode()
+							time.Sleep(10 * time.Millisecond)
+							mouse.LeftClick()
 						} else if (divCount < nDivs - 1) {
 							pressed = ""
-							showOverlay()
 							divCount ++
+							showOverlay()
 						}
 					} else {
-						fmt.Println("Pressed not in map: ", pressed)
 						if (len(pressed) >= longestKeyLen[divCount]) {
 							divMode = false
 							exitDivMode()
+							time.Sleep(10 * time.Millisecond)
+							mouse.LeftClick()
 						}
 					}
 				}
-
-				// // User has pressed key in overlay mode
-				// if (divMode && event.Value == 0) {
-				// 	// If current keystroke is the first input after overlay mode is activated
-				// 	if (!overlay01) {
-				// 		selectedDivCol = div0XKeyMap[keyNames[event.Code]]
-				// 		overlay01 = true
-
-				// 	// If current keystroke is the second input after overlay mode is activated
-				// 	} else if (overlay01 && !overlay02) {
-
-				// 		// Calculate coordinates
-				// 		if (selectedDivCol < div0Cols / 2) {
-				// 			selectedDivRow = div0Y0KeyMap[keyNames[event.Code]]
-				// 		} else {
-				// 			selectedDivRow = div0Y1KeyMap[keyNames[event.Code]]
-				// 		}
-				// 		overlay02 = true
-
-				// 		// Calculate the absolute position of the center of the selected box
-				// 		var selectedBox0Xabs = selectedDivCol * box0X + box0X / 2
-				// 		var selectedBox0Yabs = selectedDivRow * box0Y + box0Y / 2
-
-				// 		// Move the mouse to the center of the selected box and display second overlay
-				// 		mouseAbs(selectedBox0Xabs, selectedBox0Yabs)
-				// 		showOverlay1(selectedDivCol, selectedDivRow)
-
-				// 		if (adjustMode == 1) {
-				// 			exitDivMode()
-				// 			mouseMode = true
-				// 		} else if (adjustMode == 2) {
-				// 			continue
-				// 		}
-
-				// 	// If current keystroke is the third input after overlay mode is activated
-				// 	} else if (overlay01 && overlay02 && !overlay1) {
-				// 		var selectedBox1 int32 = div1KeyMap[keyNames[event.Code]]
-
-				// 		// Calculate the absolute position of the center of the selected box
-				// 		var selectedBox1Xabs = selectedDivCol * box0X + selectedBox1 % div1Cols * box1X + box1X / 2
-				// 		var selectedBox1Yabs = selectedDivRow * box0Y + selectedBox1 / div1Cols * box1Y + box1Y / 2
-
-				// 		// Move the mouse to the center of the selected box and exit overlay
-				// 		mouseAbs(selectedBox1Xabs, selectedBox1Yabs)
-				// 		exitDivMode()
-
-				// 		// Wait for overlay to exit
-				// 		time.Sleep(10 * time.Millisecond)
-				// 		mouse.LeftClick()
-				// 	}
-				// }
 			}
 		}
 	}
