@@ -19,7 +19,7 @@ scroll_right: L
 # ========== Movement modifier config ========== #
 
 mouse_speed: 10
-scroll_speed: 5
+scroll_speed: 1
 
 # ========== overlay config ========== #
 

@@ -106,12 +106,7 @@ var (
 	// Temporary state variables
 	selectedDiv0Col int32
 	selectedDiv0Row int32
-	heldMovementKeys map[string]bool = map[string]bool{
-		"W": false,
-		"A": false,
-		"S": false,
-		"D": false,
-	}
+	heldMovementKeys map[string]bool
 	movementMutex = sync.RWMutex{}
 )
 
@@ -238,6 +233,17 @@ func finalize_config() {
 	// Dimensions of each box in the second division
 	box1X = box0X / div1Cols
 	box1Y = box0Y / div1Rows
+
+	heldMovementKeys = map[string]bool{
+		mouseUp: false,
+		mouseLeft: false,
+		mouseDown: false,
+		mouseRight: false,
+		scrollUp: false,
+		scrollLeft: false,
+		scrollDown: false,
+		scrollRight: false,
+	}
 }
 
 // Open the keyboard located at keyboardPath to read inputs from it
@@ -355,17 +361,29 @@ func enterOverlayMode() {
 func movementLoop() {
 	for {
 		movementMutex.RLock()
-		if (heldMovementKeys["W"]) {
+		if (heldMovementKeys[mouseUp]) {
 			mouse.Move(0, -mouseSpeed)
 		}
-		if (heldMovementKeys["A"]) {
+		if (heldMovementKeys[mouseLeft]) {
 			mouse.Move(-mouseSpeed, 0)
 		}
-		if (heldMovementKeys["S"]) {
+		if (heldMovementKeys[mouseDown]) {
 			mouse.Move(0, mouseSpeed)
 		}
-		if (heldMovementKeys["D"]) {
+		if (heldMovementKeys[mouseRight]) {
 			mouse.Move(mouseSpeed, 0)
+		}
+		if (heldMovementKeys[scrollUp]) {
+			mouse.Wheel(false, scrollSpeed)
+		}
+		if (heldMovementKeys[scrollLeft]) {
+			mouse.Wheel(true, -scrollSpeed)
+		}
+		if (heldMovementKeys[scrollDown]) {
+			mouse.Wheel(false, -scrollSpeed)
+		}
+		if (heldMovementKeys[scrollRight]) {
+			mouse.Wheel(true, scrollSpeed)
 		}
 		movementMutex.RUnlock()
 		time.Sleep(16 * time.Millisecond)
@@ -439,10 +457,10 @@ func main() {
 					continue
 				}
 
-				// Smoother movement necessary
+				// Register holding and releasing movement keys
 				if (mouseMode) {
 					var code string = keyNames[event.Code]
-					if (code == mouseUp || code == mouseLeft || code == mouseDown || code == mouseRight) {
+					if _, ok := heldMovementKeys[code]; ok {
 						movementMutex.Lock()
 						switch (event.Value) {
 							case 1: 
@@ -453,16 +471,8 @@ func main() {
 						movementMutex.Unlock()
 					}
 
-					if (keyNames[event.Code] == scrollDown) {
-						mouse.Wheel(false, -scrollSpeed)
-					} else if (keyNames[event.Code] == scrollUp) {
-						mouse.Wheel(false, scrollSpeed)
-					} else if (keyNames[event.Code] == scrollLeft) {
-						mouse.Wheel(true, -scrollSpeed)
-					} else if (keyNames[event.Code] == scrollRight) {
-						mouse.Wheel(true, scrollSpeed)
-					} else if (keyNames[event.Code] == mouseClick) {
-						mouse.LeftClick() // Double check
+					if (event.Value == 1 && keyNames[event.Code] == mouseClick) {
+						mouse.LeftClick()
 					}
 				}
 
