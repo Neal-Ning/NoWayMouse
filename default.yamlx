@@ -5,7 +5,7 @@ keyboard_input_path: /dev/input/event7
 # ========== Keybinds config ========== #
 
 activation_key: HOME
-activate_division_overlay_key: M
+overlay_key: M
 mouse_click: SPACE
 mouse_up: W
 mouse_left: A
@@ -26,10 +26,63 @@ scroll_speed: 1
 screen_x_resolution: 1920
 screen_y_resolution: 1080
 
-number_of_divisions: 2
-division_dimensions:
-  - [3, 2]
-  - [3, 2]
-division_navigators: 
-  - [MA, OU, JK, AL, AN, OP]
-  - [A, S, D, F, J, K]
+div_1_n_cols: 5
+div_1_n_rows: 4
+
+div_0_first_key: 
+  - Q
+  - W
+  - E
+  - R
+  - T
+  - Y
+  - U
+  - I
+  - O
+  - P
+
+div_0_second_key_0:
+  - U
+  - I
+  - O
+  - P
+  - H
+  - J
+  - K
+  - L
+  - N
+  - M
+
+div_0_second_key_1:
+  - Q
+  - W
+  - E
+  - R
+  - A
+  - S
+  - D
+  - F
+  - C
+  - V
+
+div_1_key: 
+  - Q
+  - W
+  - E
+  - R
+  - T
+  - Y
+  - U
+  - I
+  - O
+  - P
+  - A
+  - S
+  - D
+  - F
+  - G
+  - H
+  - J
+  - K
+  - L
+  - N
