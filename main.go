@@ -15,8 +15,14 @@ func mouseAbs(x int32, y int32) {
 	// Move the mouse to upper left corner
 	mouse.Move(-resX - 100, -resY - 100)
 	// Move the mouse to defined position, with consideration to
-	// the fact that overlay.py does not cover the way bar
-	mouse.Move(x, y * (resY - waybarHeight) / resY + waybarHeight)
+	
+	switch (waybar) {
+		case "TOP": mouse.Move(x, y * (resY - waybarSize) / resY + waybarSize)
+		case "BOTTOM": mouse.Move(x, y * (resY - waybarSize) / resY)
+		case "LEFT": mouse.Move(x * (resX - waybarSize) / resX + waybarSize, y)
+		case "RIGHT": mouse.Move(x * (resX - waybarSize) / resX, y)
+		default: mouse.Move(x, y)
+	}
 }
 
 // Separate process to monitor held movement keys
@@ -91,12 +97,12 @@ func mouseToBox() {
 	var selectedKeyId int32 = divKeyMaps[divCount][pressed]	
 
 	// Calculate which box is selected
-	currentDivBoxX = currentDivBoxX + selectedKeyId % divDim[divCount][0] * divArea[divCount+1][0]
-	currentDivBoxY = currentDivBoxY + selectedKeyId / divDim[divCount][0] * divArea[divCount+1][1]
+	currentDivBoxX = currentDivBoxX + float32(selectedKeyId % divDim[divCount][0]) * divArea[divCount+1][0]
+	currentDivBoxY = currentDivBoxY + float32(selectedKeyId / divDim[divCount][0]) * divArea[divCount+1][1]
 
 	// Move mouse to the center of the box
-	var moveMouseX int32 = currentDivBoxX + divArea[divCount+1][0] / 2
-	var moveMouseY int32 = currentDivBoxY + divArea[divCount+1][1] / 2
+	var moveMouseX = int32(currentDivBoxX + divArea[divCount+1][0] / 2)
+	var moveMouseY = int32(currentDivBoxY + divArea[divCount+1][1] / 2)
 	mouseAbs(moveMouseX, moveMouseY)
 }
 

@@ -53,6 +53,10 @@ var (
 	resX int32
 	resY int32
 
+	// Cover the reserved pixels like waybar or not
+	waybar string
+	waybarSize int32
+
 	// Number of divisions
 	nDivs int
 
@@ -68,7 +72,7 @@ var (
 	divKeyMaps []map[string]int32
 	
 	// Dimensions of each box in the divisions
-	divArea [][2]int32
+	divArea [][2]float32
 
 	// Longest navigator keys for a division
 	longestKeyLen []int
@@ -82,7 +86,6 @@ var (
 	overlayProc *exec.Cmd // Overlay python process
 
 	// System environment variables
-	waybarHeight int32 = 30 // Height of the waybar
 	display string = os.Getenv("DISPLAY")
 	wayland string = os.Getenv("WAYLAND_DISPLAY")
 	runtimeDir string = os.Getenv("XDG_RUNTIME_DIR")
@@ -93,8 +96,8 @@ var (
 	mouseMode bool = false // Keyboard controls mouse
 	divMode bool = false // Overlay to divide screen into boxes
 	divCount int = -1 // Number of divisions currently done
-	currentDivBoxX int32 = 0 // X of corner of the box selected from the last division
-	currentDivBoxY int32 = 0 // Y of corner of the box selected from the last division
+	currentDivBoxX float32 = 0 // X of corner of the box selected from the last division
+	currentDivBoxY float32 = 0 // Y of corner of the box selected from the last division
 	pressed string = ""// String of pressed (navigation) keys during the current division
 
 	// Other
@@ -125,6 +128,8 @@ type Config struct {
 	ScrollSpeed int32 `yaml:"scroll_speed"`
 	ResX int32 `yaml:"screen_x_resolution"`
 	ResY int32 `yaml:"screen_y_resolution"`
+	Waybar string `yaml:"has_waybar"`
+	WaybarSize int32 `yaml:"waybar_size"`
 	NDivs int `yaml:"number_of_divisions"`
 	DivDim [][]int32 `yaml:"division_dimensions"`
 	DivKeys	[][]string `yaml:"division_navigators"`
@@ -160,6 +165,8 @@ func set_config() {
 	scrollSpeed = config.ScrollSpeed
 	resX = config.ResX
 	resY = config.ResY
+	waybar = config.Waybar
+	waybarSize = config.WaybarSize
 	nDivs = config.NDivs
 	divDim = config.DivDim
 	divKeys = config.DivKeys
@@ -174,8 +181,8 @@ func verify_config() {
 		panic(fmt.Sprintf("Error in config: \nnumber_of_divisions = %v, but defined %v sets of division_navigators.\n", nDivs, len(divKeys)))
 	}
 
-	var boxSizeX float32 = float32(resX)
-	var boxSizeY float32 = float32(resY)
+	var boxSizeX = float32(resX)
+	var boxSizeY = float32(resY)
 	for i, dim := range divDim {
 		if (len(dim) != 2 || dim[0] < 1 || dim[1] < 1) {
 			panic(fmt.Sprintf("Error in config: \nDivision dimension: %v not in format: [x, y], where x, y >= 1.\n", dim))
@@ -212,11 +219,11 @@ func finalize_config() {
 	}
 
 	// Divided area of each division
-	divArea = make([][2]int32, nDivs+1)
-	divArea[0] = [2]int32{resX, resY}
+	divArea = make([][2]float32, nDivs+1)
+	divArea[0] = [2]float32{float32(resX), float32(resY)}
 	for i, dim := range divDim {
-		divArea[i + 1][0] = divArea[i][0] / dim[0]
-		divArea[i + 1][1] = divArea[i][1] / dim[1]
+		divArea[i + 1][0] = divArea[i][0] / float32(dim[0])
+		divArea[i + 1][1] = divArea[i][1] / float32(dim[1])
 	}
 
 	// Define mapping of movement keys to their held state

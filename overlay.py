@@ -28,10 +28,19 @@ class OverlayWindow(Gtk.Window):
         self.config_map = {
             'screen_x_resolution': 'width',
             'screen_y_resolution': 'height',
+            'has_waybar': 'has_waybar',
+            'waybar_size': 'waybar_size',
             'number_of_divisions': 'n_divs',
             'division_dimensions': 'div_dim',
             'division_navigators': 'div_keys',
         }
+
+        # ========== Config Initializations ========== #
+
+        # Load default, user overwrites and inferred variables
+        self.load_config(self.DEFAULT_CONFIG_PATH)
+        self.load_config(self.USER_CONFIG_PATH)
+        self.finalize_config()
 
         # ========== GTK Initializations ========== #
 
@@ -42,6 +51,7 @@ class OverlayWindow(Gtk.Window):
         GtkLayerShell.set_anchor(self, Gtk.PositionType.RIGHT, True)
         GtkLayerShell.set_anchor(self, Gtk.PositionType.TOP, True)
         GtkLayerShell.set_anchor(self, Gtk.PositionType.BOTTOM, True)
+        GtkLayerShell.set_exclusive_zone(self, -1 if self.gtk_cover_all else 0)
 
         # Transparent background
         self.set_app_paintable(True)
@@ -60,12 +70,6 @@ class OverlayWindow(Gtk.Window):
         # Drawing Area (manual sizing)
         self.area = Gtk.DrawingArea()
         self.area.connect("draw", self.on_draw)
-
-        # Load default, user overwrites and inferred variables
-        self.load_config(self.DEFAULT_CONFIG_PATH)
-        self.load_config(self.USER_CONFIG_PATH)
-        self.finalize_config()
-
         self.area.set_size_request(self.width, self.height)
 
         # Use fixed container
@@ -95,19 +99,42 @@ class OverlayWindow(Gtk.Window):
     # Infer more variables from already defined variables
     def finalize_config(self):
         # Divided area of each division
-        self.div_area = [[self.width, self.height]]
+        self.div_area = [[float(self.width), float(self.height)]]
         for i in range(len(self.div_dim)):
             self.div_area.append([
-                self.div_area[i][0] / self.div_dim[i][0],
-                self.div_area[i][1] / self.div_dim[i][1]
+                float(self.div_area[i][0] / float(self.div_dim[i][0])),
+                float(self.div_area[i][1] / float(self.div_dim[i][1]))
             ])
+
+        # Create dummy cairo object to evaluate keys in pixel length
+        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, 1, 1)
+        cr = cairo.Context(surface)
+        cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
+
+        def text_width(text):
+            cr.set_font_size(100)
+            return cr.text_extents(text).width
+
+        def fit_text_width(text, target_width):
+            cr.set_font_size(100)
+            width = cr.text_extents(text).width
+            scale = (target_width * 100) / width
+            return scale
 
         # Find longest key for each division
         self.longest_key = ["" for _ in self.div_keys]
         for i in range(len(self.div_keys)):
             for key in self.div_keys[i]:
-                if len(self.longest_key[i]) < len(key):
+                if text_width(self.longest_key[i]) < text_width(key):
                     self.longest_key[i] = key
+
+        # Define font size for each division
+        self.font_sizes = []
+        for i in range(len(self.longest_key)):
+            self.font_sizes.append(fit_text_width(self.longest_key[i], self.div_area[i+1][0] / 1.5))
+
+        # Define whether overlay should cover the whole screen
+        self.gtk_cover_all = self.has_waybar == "NONE"
 
     # Listens for messages from the main go code
     def socket_listener(self):
@@ -134,8 +161,8 @@ class OverlayWindow(Gtk.Window):
                         # Note: hide again to reload the overlay
                         GLib.idle_add(self.hide)
                         self.div_count = int(self.overlay_request[1])
-                        self.current_div_box_x = int(self.overlay_request[2])
-                        self.current_div_box_y = int(self.overlay_request[3])
+                        self.current_div_box_x = float(self.overlay_request[2])
+                        self.current_div_box_y = float(self.overlay_request[3])
                         GLib.idle_add(self.show_all)
                         GLib.idle_add(self.area.queue_draw)
 
@@ -143,7 +170,7 @@ class OverlayWindow(Gtk.Window):
     def on_draw(self, widget, cr):
 
         if self.div_count == -1: return
-        
+
         cr.set_operator(cairo.OPERATOR_CLEAR)
         cr.paint()
         cr.set_operator(cairo.OPERATOR_OVER)
@@ -173,28 +200,11 @@ class OverlayWindow(Gtk.Window):
             cr.rectangle(start_coord_x, start_coord_y + next_box_height * i, box_width, 0)
         cr.stroke()
 
-        # Conversion from pixel to font size for width
-        def fit_text_width(cr, text, target_width):
-            cr.set_font_size(1)
-            width = cr.text_extents(text).width
-            scale = target_width / width
-            cr.set_font_size(scale)
-            return scale
-
-        # Conversion from pixel to font size for height
-        def fit_text_height(cr, text, target_height):
-            cr.set_font_size(1)
-            height = cr.text_extents(text).height
-            scale = target_height / height
-            cr.set_font_size(scale)
-            return scale
 
         # Text configs
         cr.set_source_rgba(1, 1, 1, 0.8)
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
-        scale_fit_width = fit_text_width(cr, self.longest_key[self.div_count], self.div_area[self.div_count][0] / 5)
-        scale_fit_height = fit_text_height(cr, self.longest_key[self.div_count], self.div_area[self.div_count][1] / 5)
-        cr.set_font_size(min(scale_fit_width, scale_fit_height))
+        cr.set_font_size(self.font_sizes[self.div_count])
 
         # Draw text
         for i in range(self.div_dim[self.div_count][0]):
