@@ -15,14 +15,7 @@ func mouseAbs(x int32, y int32) {
 	// Move the mouse to upper left corner
 	mouse.Move(-resX - 100, -resY - 100)
 	// Move the mouse to defined position, with consideration to
-	
-	switch (waybar) {
-		case "TOP": mouse.Move(x, y * (resY - waybarSize) / resY + waybarSize)
-		case "BOTTOM": mouse.Move(x, y * (resY - waybarSize) / resY)
-		case "LEFT": mouse.Move(x * (resX - waybarSize) / resX + waybarSize, y)
-		case "RIGHT": mouse.Move(x * (resX - waybarSize) / resX, y)
-		default: mouse.Move(x, y)
-	}
+	mouse.Move(x, y)	
 }
 
 // Separate process to monitor held movement keys

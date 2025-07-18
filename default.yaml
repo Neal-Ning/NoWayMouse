@@ -26,17 +26,14 @@ scroll_speed: 1
 screen_x_resolution: 1920
 screen_y_resolution: 1080
 
-has_waybar: TOP
-waybar_size: 30
-
 number_of_divisions: 2
 division_dimensions:
-  - [21, 5]
+  - [20, 5]
   - [4, 6]
 division_navigators: 
-  - [AW, AE, AR, AT, AY, AU, AI, AP, AS, AD, AF, AG, AH, AJ, AK, AL, AC, AV, AB, AN, AM,
-    EW, ER, ET, EY, EU, EI, EP, EA, ES, ED, EF, EG, EH, EJ, EK, EL, EC, EV, EB, EN, EM,
-    IQ, IW, IE, IR, IT, IU, IO, IP, IA, IS, ID, IF, IG, IH, IJ, IL, IC, IV, IB, IN, IM,
-    OQ, OW, OE, OR, OT, OU, OI, OP, OA, OS, OD, OF, OG, OH, OJ, OK, OC, OV, OB, "ON", OM,
-    UQ, UW, UE, UR, UT, UI, UO, UP, UA, US, UD, UF, UG, UH, UK, UL, UC, UV, UB, UN, UM]
+  - [AE, AR, AT, AY, AU, AI, AP, AS, AD, AF, AG, AH, AJ, AK, AL, AC, AV, AB, AN, AM,
+    EQ, EW, ER, ET, EY, EU, EI, EP, EA, ES, EF, EG, EH, EJ, EK, EL, EC, EV, EN, EM,
+    IQ, IW, IE, IR, IT, IU, IO, IP, IA, IS, ID, IF, IG, IH, IJ, IL, IC, IV, IN, IM,
+    OQ, OW, OE, OR, OT, OU, OI, OP, OA, OS, OD, OF, OG, OH, OJ, OK, OC, OV, "ON", OM,
+    UQ, UW, UE, UR, UT, UI, UO, UP, UA, US, UD, UF, UG, UH, UL, UC, UV, UB, UN, UM]
   - [Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, C, V, B, N, M]

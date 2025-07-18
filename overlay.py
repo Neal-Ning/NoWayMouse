@@ -28,8 +28,6 @@ class OverlayWindow(Gtk.Window):
         self.config_map = {
             'screen_x_resolution': 'width',
             'screen_y_resolution': 'height',
-            'has_waybar': 'has_waybar',
-            'waybar_size': 'waybar_size',
             'number_of_divisions': 'n_divs',
             'division_dimensions': 'div_dim',
             'division_navigators': 'div_keys',
@@ -51,7 +49,7 @@ class OverlayWindow(Gtk.Window):
         GtkLayerShell.set_anchor(self, Gtk.PositionType.RIGHT, True)
         GtkLayerShell.set_anchor(self, Gtk.PositionType.TOP, True)
         GtkLayerShell.set_anchor(self, Gtk.PositionType.BOTTOM, True)
-        GtkLayerShell.set_exclusive_zone(self, -1 if self.gtk_cover_all else 0)
+        GtkLayerShell.set_exclusive_zone(self, -1) # Cover the whole screen
 
         # Transparent background
         self.set_app_paintable(True)
@@ -132,9 +130,6 @@ class OverlayWindow(Gtk.Window):
         self.font_sizes = []
         for i in range(len(self.longest_key)):
             self.font_sizes.append(fit_text_width(self.longest_key[i], self.div_area[i+1][0] / 1.5))
-
-        # Define whether overlay should cover the whole screen
-        self.gtk_cover_all = self.has_waybar == "NONE"
 
     # Listens for messages from the main go code
     def socket_listener(self):

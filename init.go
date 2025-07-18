@@ -53,10 +53,6 @@ var (
 	resX int32
 	resY int32
 
-	// Cover the reserved pixels like waybar or not
-	waybar string
-	waybarSize int32
-
 	// Number of divisions
 	nDivs int
 
@@ -128,8 +124,6 @@ type Config struct {
 	ScrollSpeed int32 `yaml:"scroll_speed"`
 	ResX int32 `yaml:"screen_x_resolution"`
 	ResY int32 `yaml:"screen_y_resolution"`
-	Waybar string `yaml:"has_waybar"`
-	WaybarSize int32 `yaml:"waybar_size"`
 	NDivs int `yaml:"number_of_divisions"`
 	DivDim [][]int32 `yaml:"division_dimensions"`
 	DivKeys	[][]string `yaml:"division_navigators"`
@@ -165,8 +159,6 @@ func set_config() {
 	scrollSpeed = config.ScrollSpeed
 	resX = config.ResX
 	resY = config.ResY
-	waybar = config.Waybar
-	waybarSize = config.WaybarSize
 	nDivs = config.NDivs
 	divDim = config.DivDim
 	divKeys = config.DivKeys
