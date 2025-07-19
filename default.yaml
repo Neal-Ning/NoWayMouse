@@ -7,6 +7,7 @@ keyboard_input_path: /dev/input/event7
 activation_key: HOME
 activate_division_overlay_key: M
 mouse_click: SPACE
+mouse_right_click: Q
 mouse_up: W
 mouse_left: A
 mouse_down: S
@@ -30,6 +31,7 @@ number_of_divisions: 2
 division_dimensions:
   - [16, 10]
   - [5, 5]
+
 division_navigators: 
   - [
     AR, AT, AY, AP, AS, AD, AF, AG, AH, AJ, AK, AL, AC, AV, AN, AM,
@@ -60,5 +62,3 @@ overlay_rgba: [0, 0, 0, 0.3]
 division_lines_rgba: [255, 255, 255, 0.3]
 division_navigators_rgba: [255, 255, 255, 0.8]
 font_size_multiplier: 0.1
-
-

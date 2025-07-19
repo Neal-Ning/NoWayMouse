@@ -191,6 +191,10 @@ func main() {
 						mouse.LeftPress()
 					} else if (event.Value == 0 && keyNames[event.Code] == mouseClick) {
 						mouse.LeftRelease()
+					} else if (event.Value == 1 && keyNames[event.Code] == mouseRightClick) {
+						mouse.RightPress()
+					} else if (event.Value == 0 && keyNames[event.Code] == mouseRightClick) {
+						mouse.RightRelease()
 					}
 				}
 

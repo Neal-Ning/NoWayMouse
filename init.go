@@ -38,6 +38,7 @@ var (
 	activationKey string
 	divKey string
 	mouseClick string
+	mouseRightClick string
 	mouseUp string
 	mouseLeft string
 	mouseDown string
@@ -118,6 +119,7 @@ type Config struct {
 	ActivationKey string `yaml:"activation_key"`
 	DivKey string `yaml:"activate_division_overlay_key"`
 	MouseClick string `yaml:"mouse_click"`
+	MouseRightClick string `yaml:"mouse_right_click"`
 	MouseUKey string `yaml:"mouse_up"`
 	MouseLKey string `yaml:"mouse_left"`
 	MouseDKey string `yaml:"mouse_down"`
@@ -155,6 +157,7 @@ func set_config() {
 	activationKey = config.ActivationKey
 	divKey = config.DivKey
 	mouseClick = config.MouseClick
+	mouseRightClick = config.MouseRightClick
 	mouseUp = config.MouseUKey
 	mouseLeft = config.MouseLKey
 	mouseDown = config.MouseDKey
