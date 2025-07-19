@@ -1,6 +1,7 @@
 import gi
 import cairo
 import os
+import time
 import socket
 import threading
 import yaml
@@ -31,6 +32,9 @@ class OverlayWindow(Gtk.Window):
             'number_of_divisions': 'n_divs',
             'division_dimensions': 'div_dim',
             'division_navigators': 'div_keys',
+            'overlay_rgba' : 'overlay_rgba',
+            'division_lines_rgba': 'div_line_rgba',
+            'division_navigators_rgba': 'div_key_rgba',
         }
 
         # ========== Config Initializations ========== #
@@ -131,12 +135,13 @@ class OverlayWindow(Gtk.Window):
         for i in range(len(self.longest_key)):
             self.font_sizes.append(fit_text_width(self.longest_key[i], self.div_area[i+1][0] / 1.5))
 
+
     # Listens for messages from the main go code
     def socket_listener(self):
         try:
             os.unlink(self.SOCKET_PATH)
         except FileNotFoundError:
-            print("Sock file not found at ", self.SOCKET_PATH)
+            pass
 
         server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
         server.bind(self.SOCKET_PATH)
@@ -171,12 +176,12 @@ class OverlayWindow(Gtk.Window):
         cr.set_operator(cairo.OPERATOR_OVER)
 
         # Color background (black) and set transparency
-        cr.set_source_rgba(0, 0, 0, 0.3)
+        cr.set_source_rgba(*[val if id == 3 else val / 255 for id, val in enumerate(self.overlay_rgba)])
         cr.rectangle(0, 0, self.width, self.height)
         cr.fill()
 
         # Draw division lines
-        cr.set_source_rgba(1, 1, 1, 0.3)
+        cr.set_source_rgba(*[val if id == 3 else val / 255 for id, val in enumerate(self.div_line_rgba)])
         cr.set_line_width(2)
 
         # Infer auxilliary variables
@@ -197,7 +202,7 @@ class OverlayWindow(Gtk.Window):
 
 
         # Text configs
-        cr.set_source_rgba(1, 1, 1, 0.8)
+        cr.set_source_rgba(*[val if id == 3 else val / 255 for id, val in enumerate(self.div_key_rgba)])
         cr.select_font_face("Sans", cairo.FONT_SLANT_NORMAL, cairo.FONT_WEIGHT_BOLD)
         cr.set_font_size(self.font_sizes[self.div_count])
 

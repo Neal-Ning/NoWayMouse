@@ -37,3 +37,14 @@ division_navigators:
     OQ, OW, OE, OR, OT, OU, OI, OP, OA, OS, OD, OF, OG, OH, OJ, OK, OC, OV, "ON", OM,
     UQ, UW, UE, UR, UT, UI, UO, UP, UA, US, UD, UF, UG, UH, UL, UC, UV, UB, UN, UM]
   - [Q, W, E, R, T, Y, U, I, O, P, A, S, D, F, G, H, J, K, L, C, V, B, N, M]
+
+click_after_select: TRUE
+mouse_mode_after_select: FALSE
+
+# ========== Overlay visuals ========== #
+
+overlay_rgba: [0, 0, 0, 0.3]
+division_lines_rgba: [255, 255, 255, 0.3]
+division_navigators_rgba: [255, 255, 255, 0.8]
+
+

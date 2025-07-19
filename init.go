@@ -62,6 +62,12 @@ var (
 	// Keys used to navigate the divisions
 	divKeys [][]string
 
+	// If a click should be made after moving mouse with division navigators
+	clickAfterSelect bool
+
+	// If should enter mouse mode after moving mouse with division navigators
+	mouseModeAfterSelect bool
+
 	// ========== Inferrable variables ========== //
 
 	// Mappings from defined keys to their index
@@ -127,6 +133,8 @@ type Config struct {
 	NDivs int `yaml:"number_of_divisions"`
 	DivDim [][]int32 `yaml:"division_dimensions"`
 	DivKeys	[][]string `yaml:"division_navigators"`
+	ClickAfterSelect bool `yaml:"click_after_select"`
+	MouseModeAfterSelect bool `yaml:"mouse_mode_after_select"`
 }
 
 // Function that loads the config
@@ -162,6 +170,8 @@ func set_config() {
 	nDivs = config.NDivs
 	divDim = config.DivDim
 	divKeys = config.DivKeys
+	clickAfterSelect = config.ClickAfterSelect
+	mouseModeAfterSelect = config.MouseModeAfterSelect
 }
 
 // Verify that the defined config is sound

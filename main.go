@@ -107,6 +107,13 @@ func exitDivMode() {
 	currentDivBoxX = 0
 	currentDivBoxY = 0
 	pressed = ""
+	if (clickAfterSelect) {
+		time.Sleep(10 * time.Millisecond)
+		mouse.LeftClick()
+	}
+	if (mouseModeAfterSelect) {
+		mouseMode = true
+	}
 }
 
 // Main loop
@@ -181,7 +188,9 @@ func main() {
 					}
 
 					if (event.Value == 1 && keyNames[event.Code] == mouseClick) {
-						mouse.LeftClick()
+						mouse.LeftPress()
+					} else if (event.Value == 0 && keyNames[event.Code] == mouseClick) {
+						mouse.LeftRelease()
 					}
 				}
 
@@ -201,8 +210,6 @@ func main() {
 						if (divCount == nDivs - 1) {
 							divMode = false
 							exitDivMode()
-							time.Sleep(10 * time.Millisecond)
-							mouse.LeftClick()
 						} else if (divCount < nDivs - 1) {
 							pressed = ""
 							divCount ++
@@ -212,8 +219,6 @@ func main() {
 						if (len(pressed) >= longestKeyLen[divCount]) {
 							divMode = false
 							exitDivMode()
-							time.Sleep(10 * time.Millisecond)
-							mouse.LeftClick()
 						}
 					}
 				}
