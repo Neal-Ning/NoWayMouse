@@ -35,6 +35,7 @@ class OverlayWindow(Gtk.Window):
             'overlay_rgba' : 'overlay_rgba',
             'division_lines_rgba': 'div_line_rgba',
             'division_navigators_rgba': 'div_key_rgba',
+            'font_size_multiplier': 'font_size_multiplier',
         }
 
         # ========== Config Initializations ========== #
@@ -133,7 +134,7 @@ class OverlayWindow(Gtk.Window):
         # Define font size for each division
         self.font_sizes = []
         for i in range(len(self.longest_key)):
-            self.font_sizes.append(fit_text_width(self.longest_key[i], self.div_area[i+1][0] / 1.5))
+            self.font_sizes.append(fit_text_width(self.longest_key[i], self.div_area[i+1][0] / (2 - self.font_size_multiplier)))
 
 
     # Listens for messages from the main go code
