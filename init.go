@@ -150,7 +150,6 @@ func load_config(path string, isDefault bool) {
 	if isDefault {
 		data = defaultConfigBytes
 	} else {
-		fmt.Printf("Reading from: ", path)
 		data, err = os.ReadFile(path)
 		if err != nil {
 			fmt.Println("Read config error: ", err)
