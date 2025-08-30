@@ -1,7 +1,6 @@
 import gi
 import cairo
 import os
-import time
 import socket
 import threading
 import yaml

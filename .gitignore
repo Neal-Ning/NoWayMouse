@@ -33,8 +33,5 @@ ENV/
 env.bak/
 venv.bak/
 
-# Go hashes
-go.sum
-
 # Temporary executable
 nowaymouse
