@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"os/user"
+	_ "embed"
 	"path/filepath"
 
 	"github.com/bendahl/uinput"
@@ -22,12 +23,14 @@ import (
 var (
 	// Config loader
 	config Config
+	//go:embed default.yaml
+	defaultConfigBytes []byte
 
 	// ========== Path variables ========== //
 
 	socketPath string = "/tmp/overlay.sock"
 	defaultConfigPath string = getScriptPath("default.yaml")
-	userConfigPath string = filepath.Join("/home", userName(), ".config", "nowaymouse", "config.yaml")
+	userConfigPath string = filepath.Join(userConfPath(), "nowaymouse", "config.yaml")
 
 	// ========== Configuratble variables ========== //
 
@@ -140,10 +143,18 @@ type Config struct {
 }
 
 // Function that loads the config
-func load_config(path string) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		fmt.Println("Read config error: ", err)
+func load_config(path string, isDefault bool) {
+	var err error
+	var data []byte
+
+	if isDefault {
+		data = defaultConfigBytes
+	} else {
+		fmt.Printf("Reading from: ", path)
+		data, err = os.ReadFile(path)
+		if err != nil {
+			fmt.Println("Read config error: ", err)
+		}
 	}
 	err = yaml.Unmarshal(data, &config)
 	if err != nil {
@@ -252,9 +263,18 @@ func userName() string {
 		if err == nil {
 			return usr.Username
 		}
-		fmt.Printf("Failed to lookup SUDO_USER (%s): %v \n", sudoUser, err)
+		fmt.Sprintf("Failed to lookup SUDO_USER (%s): %v \n", sudoUser, err)
 	}
 	return ""
+}
+
+// Get config path of current user
+func userConfPath() string {
+	path, err := os.UserConfigDir()
+	if err != nil {
+		fmt.Sprintf("User config directory not found")
+	}
+	return path
 }
 
 // Get the folder contianing this script, and append python script name to it

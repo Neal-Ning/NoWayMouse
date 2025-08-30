@@ -120,8 +120,8 @@ func exitDivMode() {
 func main() {
 
 	// Load configs
-	load_config(defaultConfigPath)
-	load_config(userConfigPath)
+	load_config(defaultConfigPath, true)
+	load_config(userConfigPath, false)
 	set_config()
 	verify_config()
 	finalize_config()
