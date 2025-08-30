@@ -335,9 +335,9 @@ func initOverlay() {
 	overlayProc.Stdout = os.Stdout
 	overlayProc.Stderr = os.Stderr
 
-	err := overlayProc.Start()
-	if err != nil {
-		fmt.Printf("Failed to start overlay: %v \n", err)
+	perr := overlayProc.Start()
+	if perr != nil {
+		fmt.Printf("Failed to start overlay: %v \n", perr)
 		return
 	}
 }
