@@ -1,6 +1,6 @@
 ![# NoWayMouse](./medias/nowaymouse.png)
 
-**nowaymouse** provides effective keyboard-based control of mouse position, movements and actions on **wayland based compositors**.
+**nowaymouse** provides effective keyboard-based control of mouse position, movements and actions on [**wayland based compositors**](https://wiki.archlinux.org/title/Wayland).
 
 ## Show Case
 ### Mouse Mode
@@ -37,7 +37,7 @@ sudo -E nowaymouse
 ```
 - `sudo` is necessary for nowaymouse to access from keyboard input devices;
 - `-E` preserves your user environment variables, which nowaymouse needs.
-
+**Note**: Before running nowaymouse, make sure you have completed the [required step](#required-step-keyboard-path-configuration) described in the [Config](#config) section.
 ---
 
 ## Config
