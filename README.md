@@ -1,4 +1,4 @@
-# NoWayMouse
+![# NoWayMouse](./medias/nowaymouse.png)
 
 **nowaymouse** provides effective keyboard-based control of mouse position, movements and actions on **wayland based compositors**.
 
@@ -6,12 +6,12 @@
 ### Mouse mode
 When you activate **Mouse Mode**, you can move the mouse pointer around, as well as click and scroll.
 
-[Insert gif]
+![mousemode showcase](./medias/mousemode.gif)
 
 ### Div mode
 When you activate **Division Mode**, the screen is divided into a grid, and you can precisely choose where the mouse pointer should jump through multiple divisions.
 
-[Insert gif2]
+![divmode showcase](./medias/divmode.gif)
 
 ---
 
@@ -30,7 +30,7 @@ You may also override any other variables by defining them in `~/.config/nowaymo
 
 ---
 
-### <u>❗Required step: Keyboard Path Configuration❗</u>
+### ❗Required step: Keyboard Path Configuration❗
 The application needs to know which input device corresponds to your keyboard. To set this up:
 1. Install evtest (via `apt`, `pacman`, or any package manager of choice)
 2. Run:
