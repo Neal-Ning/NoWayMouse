@@ -13,18 +13,22 @@ When you activate **Division Mode**, the screen is divided into a grid, and you 
 
 [Insert gif2]
 
+---
+
 ## Config
 
 The default config (all configrable variables) is available at `nowaymouse/default.yaml`.
 To customize settings, create a configuration file at `~/.config/nowaymouse/config.yaml`.
 
-> Important: You must override the keyboard_input_path variable in your configuration. Without this, nowaymouse will not know which device to listen to for keyboard input.
+```diff
+- Important: You must override the keyboard_input_path variable in your configuration. Without this, nowaymouse will not know which device to listen to for keyboard input.
+```
 
 You may also override any other variables by defining them in `~/.config/nowaymouse/config.yaml`.
 
 ---
 
-### Required step: Keyboard Path Configuration
+### <span style="color: red">Required step: Keyboard Path Configuration</span>
 The application needs to know which input device corresponds to your keyboard. To set this up:
 1. Install evtest (via `apt`, `pacman`, or any package manager of choice)
 2. Run:
