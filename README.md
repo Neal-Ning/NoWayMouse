@@ -2,16 +2,41 @@
 
 **nowaymouse** provides effective keyboard-based control of mouse position, movements and actions on **wayland based compositors**.
 
-## Show case
-### Mouse mode
+## Show Case
+### Mouse Mode
 When you activate **Mouse Mode**, you can move the mouse pointer around, as well as click and scroll.
 
 ![mousemode showcase](./medias/mousemode.gif)
 
-### Div mode
+### Div Mode
 When you activate **Division Mode**, the screen is divided into a grid, and you can precisely choose where the mouse pointer should jump through multiple divisions.
 
 ![divmode showcase](./medias/divmode.gif)
+
+---
+
+## How to Install and run
+
+### Installation:
+If you are on an Arch-Based distribution, you can install directly from AUR. For example, using `yay`: 
+```bash
+yay -S nowaymouse-git
+```
+
+Alternatively, you can build from the `PKGBUILD` file included in this repository: 
+```bash
+git clone https://github.com/Neal-Ning/nowaymouse.git
+cd  nowaymouse
+makepkg -si
+```
+
+### Running:
+You can run nowaymouse with: 
+```bash
+sudo -E nowaymouse
+```
+- `sudo` is necessary for nowaymouse to access from keyboard input devices;
+- `-E` preserves your user environment variables, which nowaymouse needs.
 
 ---
 
@@ -30,7 +55,7 @@ You may also override any other variables by defining them in `~/.config/nowaymo
 
 ---
 
-### ❗Required step: Keyboard Path Configuration❗
+### ❗Required Step: Keyboard Path Configuration❗
 The application needs to know which input device corresponds to your keyboard. To set this up:
 1. Install evtest (via `apt`, `pacman`, or any package manager of choice)
 2. Run:
@@ -45,7 +70,7 @@ The application needs to know which input device corresponds to your keyboard. T
     ```
 ---
 
-### Activation key keybinds
+### Activation Key Keybinds
 **Mouse Mode** is activated by pressing the key defined in the `activation_key` variable. 
 - In Mouse Mode, you can move the pointer, click and scroll with the defined keys.
 - Note: Once nowaymouse is running, the chosen activationkey will not perform its original function.
@@ -56,7 +81,7 @@ The application needs to know which input device corresponds to your keyboard. T
 
 ---
 
-### Overlay config
+### Overlay Config
 The default behavior defined in `nowaymouse/default.yaml` entails: When you press the `activation_division_overlay_key`, an overlay grid covers the screen, where each grid cell contains a unique combination of letters called **navigators**.
 - Typing out a navigator sequence splits the corresponding grid into smaller grid cells;
 - Each smaller grid cell is labeled with a single-letter navigator;

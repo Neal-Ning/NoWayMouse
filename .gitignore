@@ -33,5 +33,12 @@ ENV/
 env.bak/
 venv.bak/
 
+# makepkg artifacts
+src/
+pkg/
+*.pkg.tar.*
+*.log
+*.sig
+
 # Temporary executable
 nowaymouse
