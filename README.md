@@ -1,6 +1,6 @@
 ![# NoWayMouse](./medias/nowaymouse.png)
 
-**nowaymouse** provides effective keyboard-based control of mouse position, movements and actions on wlroots-based [**wayland based compositors**](https://wiki.archlinux.org/title/Wayland)(works on Sway, Hyprland, Wayfire, etc).
+**nowaymouse** provides effective keyboard-based control of mouse position, movements and actions on wlroots-based [**wayland compositors**](https://wiki.archlinux.org/title/Wayland)(works on Sway, Hyprland, Wayfire, etc).
 
 ## Show Case
 ### Mouse Mode
