@@ -31,14 +31,15 @@ makepkg -si
 ```
 
 ### Running:
+
+**Note**: Before running nowaymouse, make sure you have completed the [required step](#required-step-keyboard-path-configuration) described in the [Config](#config) section.
+
 You can run nowaymouse with: 
 ```bash
 sudo -E nowaymouse
 ```
 - `sudo` is necessary for nowaymouse to access from keyboard input devices;
 - `-E` preserves your user environment variables, which nowaymouse needs.
-
-**Note**: Before running nowaymouse, make sure you have completed the [required step](#required-step-keyboard-path-configuration) described in the [Config](#config) section.
 
 ---
 
