@@ -318,14 +318,16 @@ func initOverlay() {
 
 	// pythonPath := getScriptPath(filepath.Join(".venv", "bin", "python"))
     // scriptPath := getScriptPath("overlay.py")
-	bin, err := exec.LookPath("nwm-overlay")
+	// overlayCmd := fmt.Sprintf("%s %s", pythonPath, scriptPath)
+
+	overlayCmd, err := exec.LookPath("nwm-overlay")
     if err != nil {
         fmt.Printf("overlay runner not found: %v\n", err)
         return
     }
 
     fullCmd := fmt.Sprintf("DISPLAY=%q WAYLAND_DISPLAY=%q XDG_RUNTIME_DIR=%q DBUS_SESSION_BUS_ADDRESS='%q' %s",
-        display, wayland, runtimeDir, dbus, bin)
+        display, wayland, runtimeDir, dbus, overlayCmd)
 
 	// Run command as non-root user with required environment variables
     overlayProc := exec.Command("runuser", "-l", userName(), "-c", fullCmd)

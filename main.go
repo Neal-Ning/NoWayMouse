@@ -201,13 +201,18 @@ func main() {
 				// Mousemode and user has pressed key to enter overlay
 				if (mouseMode && keyNames[event.Code] == divKey && event.Value == 0) {
 					mouseMode = false
+					movementMutex.Lock()
+					for key, _ := range heldMovementKeys {
+						heldMovementKeys[key] = false
+					}
+					movementMutex.Unlock()
 					divMode = true // Must clear heldMovementKeys when entering divMode
 					divCount ++
 					showOverlay()
 					continue
 				}
 
-				if (divMode && event.Value == 0) {
+				if (divMode && event.Value == 1) {
 					pressed += keyNames[event.Code]
 					if _,ok := divKeyMaps[divCount][pressed]; ok {
 						mouseToBox()
