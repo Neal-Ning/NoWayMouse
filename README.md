@@ -83,7 +83,7 @@ The application needs to know which input device corresponds to your keyboard. T
 - Note: Once nowaymouse is running, the chosen activation key will not perform its original function.
 
 **Div(Division) Mode** is activated by pressing the key defined in the `division_mode_activation_key` variable.
-- Div Mode displays an overlay over the screen, more details in the [overlay](#overlay_config) section.
+- Div Mode displays an overlay over the screen, more details in the [overlay](#overlay-config) section.
 - By default, you must first enter Mouse Mode before activating Div Mode.
 
 **Div Mode Activation Customization**
