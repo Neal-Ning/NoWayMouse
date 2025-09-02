@@ -126,7 +126,7 @@ class OverlayWindow(Gtk.Window):
         # Find longest key for each division
         self.longest_key = ["" for _ in self.div_keys]
         for i in range(len(self.div_keys)):
-            for key in self.div_keys[i]:
+            for key in str(self.div_keys[i]):
                 if text_width(self.longest_key[i]) < text_width(key):
                     self.longest_key[i] = key
 
@@ -209,7 +209,7 @@ class OverlayWindow(Gtk.Window):
         # Draw text
         for i in range(self.div_dim[self.div_count][0]):
             for j in range(self.div_dim[self.div_count][1]):
-                text = self.div_keys[self.div_count][j * self.div_dim[self.div_count][0] + i]
+                text = str(self.div_keys[self.div_count][j * self.div_dim[self.div_count][0] + i])
                 box_center_x = start_coord_x + next_box_width * i + int(next_box_width / 2)
                 box_center_y = start_coord_y + next_box_height * j + int(next_box_height / 2)
 

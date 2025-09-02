@@ -13,6 +13,10 @@ When you activate **Division Mode**, the screen is divided into a grid, and you 
 
 ![divmode showcase](./medias/divmode.gif)
 
+You can customize the navigation letters and the color scheme, as well as the number of division / splits.
+
+![divmode showcase2](./medias/divmode2.gif)
+
 ---
 
 ## How to Install and run
