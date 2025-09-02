@@ -80,11 +80,14 @@ The application needs to know which input device corresponds to your keyboard. T
 ### Activation Key Keybinds
 **Mouse Mode** is activated by pressing the key defined in the `mouse_mode_activation_key` variable. 
 - In Mouse Mode, you can move the pointer, click and scroll with the defined keys.
-- Note: Once nowaymouse is running, the chosen activationkey will not perform its original function.
+- Note: Once nowaymouse is running, the chosen activation key will not perform its original function.
 
 **Div(Division) Mode** is activated by pressing the key defined in the `division_mode_activation_key` variable.
-- You must first enter Mouse Mode before activating Div Mode.
-- A future update may allow Div Mode to be activated directly without being in Mouse Mode.
+- Div Mode displays an overlay over the screen, more details in the [overlay](#overlay_config) section.
+- By default, you must first enter Mouse Mode before activating Div Mode.
+
+**Div Mode Activation Customization**
+If you want to be able to activate Div Mode at any time, set the variable `div_mode_after_mouse_mode` to `FALSE`. Note in that case, the chosen activation key for Div Mode will also not perform its original function.
 
 ---
 
