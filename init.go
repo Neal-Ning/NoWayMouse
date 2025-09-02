@@ -120,8 +120,8 @@ var (
 // Config variable mapping
 type Config struct {
 	KeyboardPath string `yaml:"keyboard_input_path"`
-	ActivationKey string `yaml:"activation_key"`
-	DivKey string `yaml:"activate_division_overlay_key"`
+	ActivationKey string `yaml:"mouse_mode_activation_key"`
+	DivKey string `yaml:"div_mode_activation_key"`
 	MouseClick string `yaml:"mouse_click"`
 	DivAfterMouse bool `yaml:"div_mode_after_mouse_mode"`
 	MouseRightClick string `yaml:"mouse_right_click"`

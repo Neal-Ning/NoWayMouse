@@ -78,18 +78,18 @@ The application needs to know which input device corresponds to your keyboard. T
 ---
 
 ### Activation Key Keybinds
-**Mouse Mode** is activated by pressing the key defined in the `activation_key` variable. 
+**Mouse Mode** is activated by pressing the key defined in the `mouse_mode_activation_key` variable. 
 - In Mouse Mode, you can move the pointer, click and scroll with the defined keys.
 - Note: Once nowaymouse is running, the chosen activationkey will not perform its original function.
 
-**Div(Division) Mode** is activated by pressing the key defined in the `activation_division_overlay_key` variable.
+**Div(Division) Mode** is activated by pressing the key defined in the `division_mode_activation_key` variable.
 - You must first enter Mouse Mode before activating Div Mode.
 - A future update may allow Div Mode to be activated directly without being in Mouse Mode.
 
 ---
 
 ### Overlay Config
-The default behavior defined in `nowaymouse/default.yaml` entails: When you press the `activation_division_overlay_key`, an overlay grid covers the screen, where each grid cell contains a unique combination of letters called **navigators**.
+The default behavior defined in `nowaymouse/default.yaml` entails: When you press the `division_mode_activation_key`, an overlay grid covers the screen, where each grid cell contains a unique combination of letters called **navigators**.
 - Typing out a navigator sequence splits the corresponding grid into smaller grid cells;
 - Each smaller grid cell is labeled with a single-letter navigator;
 - Then typing a letter moves the mouse pointer the center of the corresponding smaller grid cell. 

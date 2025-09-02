@@ -1,11 +1,12 @@
 # ========== Keyboard Path ========== #
-
-keyboard_input_path: /dev/input/event7
+#
+# ! CHANGED THIS ! #
+keyboard_input_path: /dev/input/event0
 
 # ========== Keybinds config ========== #
 
-activation_key: HOME
-activate_division_overlay_key: M
+mouse_mode_activation_key: HOME
+div_mode_activation_key: M
 div_mode_after_mouse_mode: TRUE
 mouse_click: SPACE
 mouse_right_click: Q
@@ -59,7 +60,7 @@ mouse_mode_after_select: FALSE
 
 # ========== Overlay visuals ========== #
 
-overlay_rgba: [0, 0, 0, 0.3]
+overlay_background_rgba: [0, 0, 0, 0.3]
 division_lines_rgba: [255, 255, 255, 0.3]
 division_navigators_rgba: [255, 255, 255, 0.8]
 font_size_multiplier: 0.1

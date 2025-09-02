@@ -31,7 +31,7 @@ class OverlayWindow(Gtk.Window):
             'number_of_divisions': 'n_divs',
             'division_dimensions': 'div_dim',
             'division_navigators': 'div_keys',
-            'overlay_rgba' : 'overlay_rgba',
+            'overlay_background_rgba' : 'overlay_rgba',
             'division_lines_rgba': 'div_line_rgba',
             'division_navigators_rgba': 'div_key_rgba',
             'font_size_multiplier': 'font_size_multiplier',
