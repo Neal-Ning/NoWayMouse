@@ -40,6 +40,7 @@ var (
 	// Mouse mode keybinds
 	activationKey string
 	divKey string
+	divAfterMouse bool
 	mouseClick string
 	mouseRightClick string
 	mouseUp string
@@ -122,6 +123,7 @@ type Config struct {
 	ActivationKey string `yaml:"activation_key"`
 	DivKey string `yaml:"activate_division_overlay_key"`
 	MouseClick string `yaml:"mouse_click"`
+	DivAfterMouse bool `yaml:"div_mode_after_mouse_mode"`
 	MouseRightClick string `yaml:"mouse_right_click"`
 	MouseUKey string `yaml:"mouse_up"`
 	MouseLKey string `yaml:"mouse_left"`
@@ -166,6 +168,7 @@ func set_config() {
 	keyboardPath = config.KeyboardPath
 	activationKey = config.ActivationKey
 	divKey = config.DivKey
+	divAfterMouse = config.DivAfterMouse
 	mouseClick = config.MouseClick
 	mouseRightClick = config.MouseRightClick
 	mouseUp = config.MouseUKey

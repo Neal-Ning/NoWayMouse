@@ -99,6 +99,19 @@ func mouseToBox() {
 	mouseAbs(moveMouseX, moveMouseY)
 }
 
+// Reset mousemode and enter div mode
+func enterDivMode() {
+	mouseMode = false
+	movementMutex.Lock()
+	for key, _ := range heldMovementKeys {
+		heldMovementKeys[key] = false
+	}
+	movementMutex.Unlock()
+	divMode = true // Must clear heldMovementKeys when entering divMode
+	divCount ++
+	showOverlay()
+}
+
 // Reset division related variables
 func exitDivMode() {
 	hideOverlay()
@@ -162,6 +175,11 @@ func main() {
 
 				// Pass all captured key presses in normal mode
 				if (!mouseMode && !divMode) {
+					// If div mode can be activated without mouse mode, enter div mode
+					if (!divAfterMouse && keyNames[event.Code] == divKey && event.Value == 1) {
+						enterDivMode()
+						continue
+					}
 					switch event.Value {
 					case 1:
 						keyboard.KeyDown(int(event.Code))
@@ -173,7 +191,7 @@ func main() {
 					}
 				}
 
-				// Register holding and releasing movement keys
+				// Mouse mode behaviors, register holding and releasing movement keys
 				if (mouseMode) {
 					var code string = keyNames[event.Code]
 					if _, ok := heldMovementKeys[code]; ok {
@@ -199,19 +217,12 @@ func main() {
 				}
 
 				// Mousemode and user has pressed key to enter overlay
-				if (mouseMode && keyNames[event.Code] == divKey && event.Value == 0) {
-					mouseMode = false
-					movementMutex.Lock()
-					for key, _ := range heldMovementKeys {
-						heldMovementKeys[key] = false
-					}
-					movementMutex.Unlock()
-					divMode = true // Must clear heldMovementKeys when entering divMode
-					divCount ++
-					showOverlay()
+				if (mouseMode && keyNames[event.Code] == divKey && event.Value == 1) {
+					enterDivMode()
 					continue
 				}
 
+				// Div mode behaviors
 				if (divMode && event.Value == 1) {
 					pressed += keyNames[event.Code]
 					if _,ok := divKeyMaps[divCount][pressed]; ok {

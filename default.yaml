@@ -6,6 +6,7 @@ keyboard_input_path: /dev/input/event7
 
 activation_key: HOME
 activate_division_overlay_key: M
+div_mode_after_mouse_mode: TRUE
 mouse_click: SPACE
 mouse_right_click: Q
 mouse_up: W
